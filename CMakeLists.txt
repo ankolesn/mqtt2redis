@@ -8,4 +8,4 @@ conan_basic_setup()
 
 add_executable(mqtt2redis main.cpp mqtt2redis.hpp mqtt2redis.cpp)
 
-target_link_libraries(mqtt2redis PUBLIC ${CONAN_LIBS})
+target_link_libraries(mqtt2redis PUBLIC ${CONAN_LIBS} hiredis redis++)

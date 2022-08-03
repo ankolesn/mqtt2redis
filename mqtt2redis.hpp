@@ -15,6 +15,7 @@
 #include <mosquittopp.h>
 #include <mosquitto.h>
 
+inline Concurrent_queue<std::pair<std::string, std::string>> cq;
 
 class mqtt2redis {
 private:
@@ -23,7 +24,6 @@ private:
     const uint16_t thread_num = std::thread::hardware_concurrency();
     sw::redis::ConnectionOptions opts1;
     std::unique_ptr<sw::redis::Redis> r;
-    static Concurrent_queue<std::pair<std::string, std::string>> cq;
     std::atomic<bool> is_stopped = false;
 
 public:

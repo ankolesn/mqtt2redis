@@ -13,7 +13,6 @@ void mqtt2redis::on_connect(struct mosquitto *mosq, void *obj, int reason_code) 
     rc = mosquitto_subscribe(mosq, nullptr, "topic/#", 1);
     if (rc != MOSQ_ERR_SUCCESS) {
         fprintf(stderr, "Error subscribing: %s\n", mosquitto_strerror(rc));
-        /* We might as well disconnect if we were unable to subscribe */
         mosquitto_disconnect(mosq);
     }
 }
@@ -35,11 +34,10 @@ void mqtt2redis::on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qo
 
 void mqtt2redis::on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
     cq.push(std::make_pair(msg->topic, (char *)msg->payload));
-
 }
 
 void mqtt2redis::write_to(const std::string &key, const std::string &value) {
-    //auto pub1 = r->publish(key, value);
+    auto pub1 = r->publish(key, value);
 }
 
 void mqtt2redis::run() {
@@ -67,7 +65,7 @@ void mqtt2redis::read_from() {
     }
     mosquitto_connect_callback_set(mosq, &mqtt2redis::on_connect);
     mosquitto_subscribe_callback_set(mosq, &mqtt2redis::on_subscribe);
-    mosquitto_message_callback_set(mosq, &mqtt2redis::on_message);
+    mosquitto_message_callback_set(mosq, &on_message);
 
     rc = mosquitto_connect(mosq, "127.0.0.1", 1883, 60);
     if (rc != MOSQ_ERR_SUCCESS) {
