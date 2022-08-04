@@ -14,13 +14,16 @@
 #include <atomic>
 #include <mosquittopp.h>
 #include <mosquitto.h>
+#include <fstream>
+#include <map>
 
 inline Concurrent_queue<std::pair<std::string, std::string>> cq;
 
 class mqtt2redis {
 private:
-    std::string ip = "127.0.0.1";
-    int port = 6380;
+    std::string mqtt_ip = "";
+    int mqtt_port = 0;
+    std::map<std::string, std::string> params;
     const uint16_t thread_num = std::thread::hardware_concurrency();
     sw::redis::ConnectionOptions opts1;
     std::unique_ptr<sw::redis::Redis> r;
@@ -39,6 +42,8 @@ public:
     void run();
 
     void read_from();
+
+    void read_from_file();
 
     [[noreturn]] void do_work() {
         std::pair<std::string, std::string> p;
